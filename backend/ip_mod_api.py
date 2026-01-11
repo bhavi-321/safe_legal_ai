@@ -4,6 +4,8 @@ from typing import List, Dict
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import json
 import tempfile
+# from pdf2image import convert_from_path
+# from paddleocr import PaddleOCR
 
 class ContractIngestor:
     def __init__(self, chunk_size=500, chunk_overlap=50):
@@ -42,8 +44,6 @@ class ContractIngestor:
             return full_text
         
         else:
-            from pdf2image import convert_from_path
-            from paddleocr import PaddleOCR
 
             pocr = PaddleOCR(use_textline_orientation=True, lang='en')
             text = []
@@ -126,4 +126,5 @@ if __name__ == "__main__":
         all_data = chunks
         with open(output_file, 'w') as f:
             json.dump(all_data, f, indent=4)
+
         print(f"\nSUCCESS! Generated {len(all_data)} items. Saved to {output_file}")
