@@ -170,7 +170,7 @@ async def analyze_contract(file: UploadFile = File(...)):
                 name="risk_detection"
             ) as detection_span:
                 detector = RiskDetector(
-                    "H:\\proj\\Legality_AI\\synthetic_gold_standard_with_nli.json"
+                    "dataset\\synthetic_gold_standard_with_nli.json"
                 )
                 risks = detector.detect_risks(chunks, threshold=0.75)
                 detection_span.update(output={"num_risks": len(risks)})
@@ -254,7 +254,7 @@ async def analyze_contract(file: UploadFile = File(...)):
 @app.get("/health")
 async def health_check():
     """Check if all required files and dependencies are available"""
-    dataset_path = "H:\\proj\\Legality_AI\\synthetic_gold_standard_with_nli.json"
+    dataset_path = "dataset\\synthetic_gold_standard_with_nli.json"
     
     # Test Langfuse connection
     langfuse_ok = False
@@ -280,4 +280,5 @@ async def shutdown_event():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="127.0.0.1", port=8000)
