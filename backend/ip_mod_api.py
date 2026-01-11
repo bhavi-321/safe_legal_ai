@@ -128,3 +128,4 @@ if __name__ == "__main__":
             json.dump(all_data, f, indent=4)
 
         print(f"\nSUCCESS! Generated {len(all_data)} items. Saved to {output_file}")
+
