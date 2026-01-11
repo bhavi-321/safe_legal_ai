@@ -3,7 +3,8 @@ import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import DocumentUpload from "@/components/DocumentUpload";
 import AnalysisResults from "@/components/AnalysisResults";
-import { analyzeContract, processApiResponse, ProcessedClause } from "@/services/api";
+import { processApiResponse, ProcessedClause } from "@/services/api";
+import { analyzeContract } from "@/services/contractApi";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
