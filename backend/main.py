@@ -308,7 +308,6 @@ async def health_check():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    """Ensure all Langfuse data is flushed on shutdown"""
     if langfuse:
         langfuse.flush()
 
@@ -316,6 +315,7 @@ async def shutdown_event():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
 
 
 
