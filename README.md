@@ -1,73 +1,178 @@
-# Welcome to your Lovable project
+Here is a professional, detailed `README.md` for your project. You can copy-paste this directly into the `README.md` file in the root of your repository.
 
-## Project info
+---
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+# ⚖️ Legality AI - Contract Risk Detector
 
-## How can I edit this code?
+**Legality AI** is an intelligent contract analysis tool designed to identify legal risks in contracts automatically. It uses a custom-trained Sentence Transformer model to detect risky clauses for the category of "Termination for Convenience", "Uncapped Liability" and "Non-Compete" and uses Large Language Models (LLMs) to suggest safer, more balanced rewrites.
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## 🚀 Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+* **📄 Automated PDF Analysis:** Upload any contract PDF; the system extracts text and chunks it for analysis.
+* **⚠️ Risk Detection:** Uses vector similarity search to compare contract clauses against a "Gold Standard" database of known legal risks.
+* **🤖 AI Suggestions:** Automatically generates safe, balanced rewrites for risky clauses using **Mistral-7B** (via OpenRouter).
+* **🛡️ Safety Guardrails:** automatically flags high-risk clauses (like Liability Caps) as "Review Only" to prevent dangerous AI hallucinations.
+* **📊 Observability:** Full tracing of AI logic and latency using **Langfuse**. **(In further updates)**
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🛠️ Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### **Backend**
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+* **Framework:** FastAPI (Python)
+* **ML Model:** `sentence-transformers` (Custom Model: `bhavibhatt/legal_model` (on huggingface))
+* **LLM Engine:** OpenRouter API (`mistralai/mistral-7b-instruct`)
+* **Vector Search:** Scikit-Learn (Cosine Similarity)
+* **PDF Processing:** `pdfplumber` & `langchain-text-splitters`
+* **Observability:** Langfuse
 
-Follow these steps:
+### **Frontend**
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+* **Framework:** React (Vite)
+* **Styling:** Tailwind CSS / Shadcn UI
+* **Language:** TypeScript
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### **Deployment**
 
-# Step 3: Install the necessary dependencies.
-npm i
+* **Backend:** Railway
+* **Frontend:** Vercel
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+---
+
+## 🏗️ Architecture
+
+1. **Ingestion:** User uploads a PDF → Backend extracts text → Splits text into chunks.
+2. **Embedding:** Chunks are converted into vectors using the custom Hugging Face model.
+3. **Risk Search:** Vectors are compared against the `synthetic_gold_standard.json` dataset. High similarity scores trigger a "Risk Detected" flag.
+4. **Policy Check:** The system checks if the clause is "Rewrite Allowed" or "Review Only" (e.g., Liability clauses are never rewritten).
+5. **Generative Rewrite:** If allowed, the LLM generates a safer version of the clause.
+
+---
+
+## 💻 Local Installation
+
+Follow these steps to run the project locally.
+
+### **1. Clone the Repository**
+
+```bash
+git clone https://github.com/your-username/legality-ai.git
+cd legality-ai
+
 ```
 
-**Edit a file directly in GitHub**
+### **2. Backend Setup**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Navigate to the backend folder and install dependencies.
 
-**Use GitHub Codespaces**
+```bash
+cd backend
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Create a virtual environment (Recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-## What technologies are used for this project?
+# Install dependencies
+pip install -r requirements.txt
 
-This project is built with:
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+**Configure Environment Variables:**
+Create a `.env` file inside the `backend/` folder:
 
-## How can I deploy this project?
+```env
+# AI & Model Keys
+OPENROUTER_API_KEY=your_openrouter_key_here
+HF_TOKEN=your_huggingface_token_here
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+# Langfuse (Observability) - Optional
+LANGFUSE_PUBLIC_KEY=your_langfuse_public_key_here
+LANGFUSE_SECRET_KEY=your_langfuse_secret_key_here
+LANGFUSE_HOST=https://cloud.langfuse.com
 
-## Can I connect a custom domain to my Lovable project?
+```
 
-Yes, you can!
+**Run the Server:**
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```bash
+uvicorn main:app --reload
+# Backend will run at: http://127.0.0.1:8000
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```
+
+### **3. Frontend Setup**
+
+Open a new terminal and navigate to the root (or frontend folder if separate).
+
+```bash
+cd frontend  # or just stay in root if package.json is there
+npm install
+npm run dev
+# Frontend will run at: http://localhost:5173
+
+```
+
+---
+
+## 🌍 Deployment
+
+### **Backend (Railway)**
+
+The backend is deployed on Railway to handle the heavy ML libraries (`torch`, `transformers`).
+
+* **Build Command:** `pip install -r requirements.txt`
+* **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+* **Root Directory:** `/backend`
+
+### **Frontend (Vercel)**
+
+The frontend is deployed on Vercel for fast global CDN delivery.
+
+* **Framework Preset:** Vite
+* **Build Command:** `npm run build`
+* **Output Directory:** `dist`
+
+---
+
+## 🔌 API Endpoints
+
+### `POST /analyze-contract`
+
+Uploads a PDF and returns a list of detected risks.
+
+* **Input:** `multipart/form-data` (Key: `file`)
+* **Response:**
+```json
+{
+  "filename": "contract.pdf",
+  "risks": [
+    {
+      "risk_category": "Termination For Convenience",
+      "chunk_text": "Party A may terminate...",
+      "similarity_score": 0.85,
+      "suggested_clause": "Party A may terminate with 30 days prior written notice..."
+    }
+  ]
+}
+
+```
+
+
+
+### `GET /health`
+
+Checks if the ML model is loaded and external APIs are connected.
+
+---
+
+## 🤝 Contributers
+
+1. Bhavyang
+2. Sneha
+3. Vedant
+
+---
+
