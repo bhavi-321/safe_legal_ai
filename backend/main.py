@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 from dotenv import load_dotenv
-from langfuse import Langfuse
+# from langfuse import Langfuse
 import traceback
 from openai import OpenAI 
 
@@ -30,7 +30,7 @@ load_dotenv()
 #     langfuse = Langfuse()
 # except Exception as e:
 #     print(f"Warning: Langfuse client failed to initialize: {e}")
-langfuse = None
+# langfuse = None
 
 
 client = OpenAI(
@@ -143,11 +143,11 @@ async def analyze_contract(file: UploadFile = File(...)):
     try:
         # Create a trace for this contract analysis
         trace_span = None
-        if langfuse:
-            trace_span = langfuse.trace(
-                name="analyze_contract",
-                input={"filename": file.filename}
-            )
+        # if langfuse:
+        #     trace_span = langfuse.trace(
+        #         name="analyze_contract",
+        #         input={"filename": file.filename}
+        #     )
             
         try:
             # Save uploaded PDF temporarily
@@ -159,8 +159,8 @@ async def analyze_contract(file: UploadFile = File(...)):
                 pdf_path = tmp.name
 
             ingestion_span = None
-            if langfuse:
-                ingestion_span = trace_span.span(name="ingestion")
+            # if langfuse:
+            #     ingestion_span = trace_span.span(name="ingestion")
             
             ingestor = ContractIngestor(chunk_size=600, chunk_overlap=150)
             chunks = ingestor.process_contract(pdf_path)
@@ -177,14 +177,14 @@ async def analyze_contract(file: UploadFile = File(...)):
                     "risks": [],
                     "message": "No text could be extracted from the PDF."
                 }
-                if trace_span:
-                    trace_span.update(output=result)
-                    trace_span.end()
+                # if trace_span:
+                #     trace_span.update(output=result)
+                #     trace_span.end()
                 return JSONResponse(status_code=200, content=result)
 
             detection_span = None
-            if langfuse:
-                detection_span = trace_span.span(name="risk_detection")
+            # if langfuse:
+            #     detection_span = trace_span.span(name="risk_detection")
                 
             risks = detector.detect_risks(chunks, threshold=0.75)
             
@@ -261,8 +261,8 @@ async def analyze_contract(file: UploadFile = File(...)):
             except Exception as e:
                 print(f"Warning: Could not delete temporary file {pdf_path}: {e}")
         
-        if langfuse:
-            langfuse.flush()
+        # if langfuse:
+        #     langfuse.flush()
 
 @app.get("/health")
 async def health_check():
@@ -270,32 +270,33 @@ async def health_check():
     dataset_exists = os.path.exists(DATASET_PATH)
     
     
-    langfuse_ok = False
-    if langfuse:
-        try:
-            langfuse.auth_check()
-            langfuse_ok = True
-        except Exception as e:
-            print(f"Langfuse auth check failed: {e}")
+    # langfuse_ok = False
+    # if langfuse:
+    #     try:
+    #         langfuse.auth_check()
+    #         langfuse_ok = True
+    #     except Exception as e:
+    #         print(f"Langfuse auth check failed: {e}")
     
     return {
         "status": "healthy",
-        "langfuse_connected": langfuse_ok,
+        # "langfuse_connected": langfuse_ok,
         "dataset_exists": dataset_exists,
         "dataset_path": DATASET_PATH,
         "model_initialized": detector is not None
     }
 
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    if langfuse:
-        langfuse.flush()
+# @app.on_event("shutdown")
+# async def shutdown_event():
+    # if langfuse:
+    #     langfuse.flush()
 
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
 
 
 
