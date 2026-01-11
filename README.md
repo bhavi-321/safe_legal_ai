@@ -1,5 +1,4 @@
 ---
-
 # ⚖️ Legality AI - Contract Risk Detector
 
 **Legality AI** is an intelligent contract analysis tool designed to identify legal risks in contracts automatically. It uses a custom-trained Sentence Transformer model to detect risky clauses for the category of "Termination for Convenience", "Uncapped Liability" and "Non-Compete" and uses Large Language Models (LLMs) to suggest safer, more balanced rewrites.
