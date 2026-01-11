@@ -143,25 +143,6 @@ The frontend is deployed on Vercel for fast global CDN delivery.
 
 Uploads a PDF and returns a list of detected risks.
 
-* **Input:** `multipart/form-data` (Key: `file`)
-* **Response:**
-```json
-{
-  "filename": "contract.pdf",
-  "risks": [
-    {
-      "risk_category": "Termination For Convenience",
-      "chunk_text": "Party A may terminate...",
-      "similarity_score": 0.85,
-      "suggested_clause": "Party A may terminate with 30 days prior written notice..."
-    }
-  ]
-}
-
-```
-
-
-
 ### `GET /health`
 
 Checks if the ML model is loaded and external APIs are connected.
