@@ -24,7 +24,7 @@ const AnalysisResults = ({ results, fileName, onNewAnalysis }: AnalysisResultsPr
   const lowRiskCount = results.filter((r) => r.riskLevel === "low").length;
 
   const overallScore = Math.round(
-    100 - (highRiskCount * 15 + mediumRiskCount * 8 + lowRiskCount * 2)
+    100 - ((highRiskCount/100) * 15 + (mediumRiskCount/100) * 8 + (lowRiskCount/100) * 2)
   );
 
   return (
