@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 from dotenv import load_dotenv
-from langfuse import Langfuse
+# from langfuse import Langfuse
 import traceback
 from openai import OpenAI 
 
@@ -25,13 +25,12 @@ FORBIDDEN_TERMS = [
 # Load environment variables
 load_dotenv()
 
-# Initialize Langfuse client
-# Ensure LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY, LANGFUSE_HOST are in Render Env Vars
-try:
-    langfuse = Langfuse()
-except Exception as e:
-    print(f"Warning: Langfuse client failed to initialize: {e}")
-    langfuse = None
+
+# try:
+#     langfuse = Langfuse()
+# except Exception as e:
+#     print(f"Warning: Langfuse client failed to initialize: {e}")
+langfuse = None
 
 # --- NEW: Initialize OpenRouter Client ---
 # Make sure OPENROUTER_API_KEY is in your .env file
@@ -317,4 +316,5 @@ async def shutdown_event():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
 
