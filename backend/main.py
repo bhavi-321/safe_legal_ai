@@ -12,6 +12,7 @@ from ip_mod_api import ContractIngestor
 from vector_search import RiskDetector
 from clause_policy import decide_clause_action, ClauseAction, validate_rewrite_output
 
+
 FORBIDDEN_TERMS = [
     "liability shall be limited",
     "in no event shall",
@@ -296,6 +297,7 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
 
 
 
