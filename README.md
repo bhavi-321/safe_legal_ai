@@ -1,5 +1,3 @@
-Here is a professional, detailed `README.md` for your project. You can copy-paste this directly into the `README.md` file in the root of your repository.
-
 ---
 
 # ⚖️ Legality AI - Contract Risk Detector
