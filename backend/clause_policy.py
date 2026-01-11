@@ -1,20 +1,11 @@
 from enum import Enum
 
 
-# -------------------------------
-# Clause Action Types
-# -------------------------------
-
 class ClauseAction(str, Enum):
     REWRITE = "rewrite"
     REVIEW_ONLY = "review_only"
 
 
-# -------------------------------
-# Risk Categories by Action
-# -------------------------------
-
-# These risks may be safely rewritten for clarity
 REWRITE_ALLOWED_RISKS = {
     "Ambiguous Termination",
     "One-Sided Termination",
@@ -25,8 +16,6 @@ REWRITE_ALLOWED_RISKS = {
     "Ambiguous Jurisdiction",
 }
 
-# These risks MUST NOT be rewritten automatically
-# because rewriting would change legal risk allocation
 REVIEW_ONLY_RISKS = {
     "Uncapped Liability",
     "Unlimited Liability",
@@ -39,12 +28,7 @@ REVIEW_ONLY_RISKS = {
 }
 
 
-# -------------------------------
-# Clause Content Safety Heuristics
-# -------------------------------
 
-# If any of these appear in the clause text,
-# the clause is automatically marked REVIEW_ONLY
 FORBIDDEN_REWRITE_KEYWORDS = [
     "liability",
     "damages",
@@ -62,9 +46,6 @@ FORBIDDEN_REWRITE_KEYWORDS = [
 ]
 
 
-# -------------------------------
-# Clause Action Resolver
-# -------------------------------
 
 def decide_clause_action(risk_category: str, clause_text: str) -> ClauseAction:
     """
@@ -83,26 +64,24 @@ def decide_clause_action(risk_category: str, clause_text: str) -> ClauseAction:
     risk_category = (risk_category or "").strip()
     clause_lower = (clause_text or "").lower()
 
-    # 1. Explicit review-only risks
+    # Explicit review-only risks
     if risk_category in REVIEW_ONLY_RISKS:
         return ClauseAction.REVIEW_ONLY
 
-    # 2. Keyword-based safety override
+    # Keyword-based safety override
     for keyword in FORBIDDEN_REWRITE_KEYWORDS:
         if keyword in clause_lower:
             return ClauseAction.REVIEW_ONLY
 
-    # 3. Explicit rewrite-allowed risks
+    # Explicit rewrite-allowed risks
     if risk_category in REWRITE_ALLOWED_RISKS:
         return ClauseAction.REWRITE
 
-    # 4. Default: be conservative
+    # Default: be conservative
     return ClauseAction.REVIEW_ONLY
 
 
-# -------------------------------
-# Optional: Rewrite Output Validator
-# -------------------------------
+
 
 UNSAFE_REWRITE_OUTPUT_TERMS = [
     "liability shall be limited",
@@ -128,3 +107,4 @@ def validate_rewrite_output(rewritten_text: str) -> bool:
             return False
 
     return True
+
