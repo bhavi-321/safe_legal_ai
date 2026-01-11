@@ -83,7 +83,6 @@ async def analyze_contract(file: UploadFile = File(...)):
                 tmp.write(contents)
                 pdf_path = tmp.name
 
-            # Ingest PDF → chunks
             with langfuse.start_as_current_observation(
                 as_type="span",
                 name="ingestion"
@@ -151,7 +150,6 @@ async def analyze_contract(file: UploadFile = File(...)):
             except Exception as e:
                 print(f"Warning: Could not delete temporary file {pdf_path}: {e}")
         
-        # Flush events to Langfuse (important for short-lived requests)
         langfuse.flush()
 
 
@@ -185,5 +183,6 @@ async def shutdown_event():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+
 
 
